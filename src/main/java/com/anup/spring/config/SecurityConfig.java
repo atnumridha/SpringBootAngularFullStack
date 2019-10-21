@@ -28,13 +28,41 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private UserService userService;
 
+//	@Override
+//	protected void configure(HttpSecurity http) throws Exception {
+//		http.csrf().disable().
+//
+//				authorizeRequests().antMatchers(HttpMethod.OPTIONS, "/api/v1/**").permitAll().anyRequest()
+//				.authenticated().and().httpBasic();
+//	}
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable().
 
-				authorizeRequests().antMatchers(HttpMethod.OPTIONS, "/**").permitAll().anyRequest().authenticated()
-				.and().httpBasic();
+		http
+				// HTTP Basic authentication
+				.httpBasic().and().authorizeRequests().antMatchers(HttpMethod.OPTIONS, "/api/v1/**")
+				.hasAnyRole("ROLE_ADMIN", "ROLE_USER", "ROLE_MANAGER").and().csrf().disable().formLogin().disable();
 	}
+
+	// Secure the endpoins with HTTP Basic authentication
+//    @Override
+//    protected void configure(HttpSecurity http) throws Exception {
+//
+//        http
+//                //HTTP Basic authentication
+//                .httpBasic()
+//                .and()
+//                .authorizeRequests()
+//                .antMatchers(HttpMethod.GET, "/books/**").hasRole("USER")
+//                .antMatchers(HttpMethod.POST, "/books").hasRole("ADMIN")
+//                .antMatchers(HttpMethod.PUT, "/books/**").hasRole("ADMIN")
+//                .antMatchers(HttpMethod.PATCH, "/books/**").hasRole("ADMIN")
+//                .antMatchers(HttpMethod.DELETE, "/books/**").hasRole("ADMIN")
+//                .and()
+//                .csrf().disable()
+//                .formLogin().disable();
+//    }
 
 	@Bean
 	public BCryptPasswordEncoder passwordEncoder() {
